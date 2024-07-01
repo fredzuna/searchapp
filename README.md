@@ -1,4 +1,4 @@
-# About Search moview mini project
+# About the project
 I used next functionalitites to in the project 
 - infinite scroll to load more items
 - throttle to load items while the user is typing in the searc field

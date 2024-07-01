@@ -1,3 +1,9 @@
+# About Search moview mini project
+I used next functionalitites to in the project 
+- infinite scroll to load more items
+- throttle to load items while the user is typing in the searc field
+- tailwindcss to add styles to the project 
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

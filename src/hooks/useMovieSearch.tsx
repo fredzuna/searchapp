@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import throttle from 'lodash/throttle';
+import { get } from '../apiService';
 import { IMovie } from '../interfaces/IMovie';
 
 const useMovieSearch = () => {
@@ -9,23 +10,14 @@ const useMovieSearch = () => {
   const [error, setError] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const resultContainerRef = useRef<HTMLDivElement>(null);
-  const apiKey = '5d1d338defaa5fa30f219fcfdee61747';
+  const resultContainerRef = useRef<HTMLDivElement>(null);  
 
   const searchMovies = async (searchQuery: string, page: number) => {
     setLoading(true);
     setError('');
 
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${searchQuery}&page=${page}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
+      const data = await get(`/search/movie?query=${searchQuery}&page=${page}`);
       setMovies((prevMovies) => [...prevMovies, ...data.results]);
       setHasMore(data.page < data.total_pages);
     } catch (err) {

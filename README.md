@@ -1,8 +1,13 @@
 # About the project
-I used next functionalitites to in the project 
+I used next functionalitites to the project 
 - infinite scroll to load more items
 - throttle to load items while the user is typing in the searc field
 - tailwindcss to add styles to the project 
+
+# run the project
+- npm run dev
+- open http://localhost:5173/
+
 
 # React + TypeScript + Vite
 

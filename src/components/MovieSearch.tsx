@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { IMovie } from '../interfaces/IMovie';
 import throttle from 'lodash/throttle';
+import MovieCard from './MovieCard';
+import { SearchForm } from './SearchForm';
 
 const MovieSearch: React.FC = () => {
   const [query, setQuery] = useState<string>('');
@@ -11,7 +13,7 @@ const MovieSearch: React.FC = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const resultContainerRef = useRef<HTMLDivElement>(null);
 
-  const apiKey = '5d1d338defaa5fa30f219fcfdee61747'; // Replace with your TMDb API key
+  const apiKey = '5d1d338defaa5fa30f219fcfdee61747';
 
   const searchMovies = async (searchQuery: string, page: number) => {
     setLoading(true);
@@ -86,49 +88,16 @@ const MovieSearch: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <form onSubmit={(e) => e.preventDefault()} className="mb-4 flex justify-center">
-        <input
-          type="text"
-          placeholder="Search for a movie..."
-          value={query}
-          onChange={handleInputChange}
-          className="p-2 border rounded mb-2 w-3/4"
-        />
-        {query && (
-          <button
-            type="button"
-            onClick={handleClearSearch}
-            className="ml-2 p-2 text-gray-500 hover:text-gray-700"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-      </form>
-
+      <SearchForm query={query} handleInputChange={handleInputChange} handleClearSearch={handleClearSearch} />
       {loading && <p className="text-center">Loading...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
-
       <div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 result-container"
         ref={resultContainerRef}
         style={{ height: '80vh', overflowY: 'auto' }}
       >
         {movies.map((movie) => (
-          <div key={movie.id} className="movie-card p-4 border rounded">
-            {movie.poster_path && (
-              <img
-                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
-                alt={movie.title}
-                className="w-full h-auto rounded"
-              />
-            )}
-            <div className="movie-info mt-2">
-              <h3 className="text-lg font-semibold">{movie.title}</h3>
-              <p className="text-gray-600">{movie.release_date.split('-')[0]}</p>
-            </div>
-          </div>
+          <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
     </div>

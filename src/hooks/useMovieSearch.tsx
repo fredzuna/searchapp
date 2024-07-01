@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import throttle from 'lodash/throttle';
 import { IMovie } from '../interfaces/IMovie';
 
-const apiKey = '5d1d338defaa5fa30f219fcfdee61747'; // Replace with your TMDb API key
-
-const useMovies = () => {
+const useMovieSearch = () => {
+  const [query, setQuery] = useState<string>('');
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [query, setQuery] = useState<string>('');
+  const resultContainerRef = useRef<HTMLDivElement>(null);
+  const apiKey = '5d1d338defaa5fa30f219fcfdee61747';
 
   const searchMovies = async (searchQuery: string, page: number) => {
     setLoading(true);
@@ -42,7 +42,8 @@ const useMovies = () => {
     []
   );
 
-  const handleInputChange = (newQuery: string) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
     setQuery(newQuery);
     setMovies([]);
     setPage(1);
@@ -57,22 +58,39 @@ const useMovies = () => {
     setHasMore(true);
   };
 
+  const handleScroll = useCallback(() => {
+    const container = resultContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    if (scrollTop + clientHeight >= scrollHeight - 50 && !loading && hasMore) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  }, [loading, hasMore]);
+
   useEffect(() => {
     if (page > 1) {
       throttledSearch(query, page);
     }
   }, [page]);
 
+  useEffect(() => {
+    const container = resultContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll]);
+
   return {
+    query,
     movies,
     loading,
     error,
-    query,
-    hasMore,
-    setPage,
     handleInputChange,
     handleClearSearch,
+    resultContainerRef,
   };
 };
 
-export default useMovies;
+export default useMovieSearch;

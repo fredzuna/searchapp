@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import throttle from 'lodash/throttle';
 import { get } from '../apiService';
 import { IMovie } from '../interfaces/IMovie';
+import useInfiniteScroll from './useInfiniteScroll';
 
 const useMovieSearch = () => {
   const [query, setQuery] = useState<string>('');
@@ -10,7 +11,6 @@ const useMovieSearch = () => {
   const [error, setError] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const resultContainerRef = useRef<HTMLDivElement>(null);  
 
   const searchMovies = async (searchQuery: string, page: number) => {
     setLoading(true);
@@ -50,29 +50,17 @@ const useMovieSearch = () => {
     setHasMore(true);
   };
 
-  const handleScroll = useCallback(() => {
-    const container = resultContainerRef.current;
-    if (!container) return;
+  const loadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
 
-    const { scrollTop, scrollHeight, clientHeight } = container;
-    if (scrollTop + clientHeight >= scrollHeight - 50 && !loading && hasMore) {
-      setPage((prevPage) => prevPage + 1);
-    }
-  }, [loading, hasMore]);
+  const resultContainerRef = useInfiniteScroll(loading, hasMore, loadMore);
 
   useEffect(() => {
     if (page > 1) {
       throttledSearch(query, page);
     }
-  }, [page]);
-
-  useEffect(() => {
-    const container = resultContainerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => container.removeEventListener('scroll', handleScroll);
-    }
-  }, [handleScroll]);
+  }, [page, query, throttledSearch]);
 
   return {
     query,

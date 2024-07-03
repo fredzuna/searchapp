@@ -6,7 +6,7 @@ interface IProps {
 
 export default function MovieCard({ movie }: IProps) {
   return (
-    <div className="movie-card p-4 border rounded hover:bg-gray-800 transition duration-300">
+    <div className="movie-card p-4 border rounded-lg hover:bg-gray-800 transition duration-300 hover:shadow-lg transform hover:scale-95">
       <div className="min-h-[490px]" >
         {movie.poster_path && (
           <img

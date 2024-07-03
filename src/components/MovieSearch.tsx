@@ -1,6 +1,6 @@
 import React, { } from 'react';
 import { SearchForm } from './SearchForm';
-import { useMovieSearchContext } from './MovieSearchContext';
+import { useMovieSearchContext } from '../context/MovieSearchContext';
 import SearchResult from './SearchResult';
 
 const MovieSearch: React.FC = () => {

@@ -1,5 +1,5 @@
 import MovieCard from './MovieCard';
-import { useMovieSearchContext } from './MovieSearchContext';
+import { useMovieSearchContext } from '../context/MovieSearchContext';
 
 export default function SearchResult() {
   const { movies, resultContainerRef } = useMovieSearchContext();
